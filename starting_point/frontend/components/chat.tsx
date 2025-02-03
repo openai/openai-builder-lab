@@ -15,6 +15,7 @@ interface ChatProps {
 const Chat: React.FC<ChatProps> = ({ items, onSendMessage, loading }) => {
   const itemsEndRef = useRef<HTMLDivElement>(null)
   const [inputMessageText, setinputMessageText] = useState<string>('')
+  const [composing, setComposing] = useState(false)
 
   const scrollToBottom = () => {
     itemsEndRef.current?.scrollIntoView({ behavior: 'instant' })
@@ -65,8 +66,10 @@ const Chat: React.FC<ChatProps> = ({ items, onSendMessage, loading }) => {
                       className="m-0 resize-none border-0 focus:outline-none text-sm bg-transparent px-0 py-2 max-h-[20dvh]"
                       value={inputMessageText}
                       onChange={e => setinputMessageText(e.target.value)}
+                      onCompositionStart={() => setComposing(true)}
+                      onCompositionEnd={() => setComposing(false)}
                       onKeyDown={e => {
-                        if (e.key === 'Enter' && !e.shiftKey) {
+                        if (!composing && e.key === 'Enter' && !e.shiftKey) {
                           e.preventDefault()
                           onSendMessage(inputMessageText)
                           setinputMessageText('')
